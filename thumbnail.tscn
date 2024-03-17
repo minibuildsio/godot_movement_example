@@ -1,0 +1,83 @@
+[gd_scene load_steps=13 format=3 uid="uid://c7lrvroea84t5"]
+
+[ext_resource type="Texture2D" uid="uid://1o6v7f1sgf7r" path="res://grass.png" id="1_g73dy"]
+[ext_resource type="Script" path="res://fullscreen.gd" id="1_qykxt"]
+[ext_resource type="PackedScene" uid="uid://hn5061b0cpo1" path="res://cube.blend" id="3_o4eij"]
+[ext_resource type="Texture2D" uid="uid://bygkn5aadccdg" path="res://arrows.png" id="6_jqt17"]
+
+[sub_resource type="Environment" id="Environment_e0dry"]
+background_mode = 1
+background_color = Color(0.101961, 0.101961, 0.101961, 1)
+background_energy_multiplier = 0.0
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+tonemap_mode = 3
+tonemap_exposure = 0.25
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d12l5"]
+albedo_texture = ExtResource("1_g73dy")
+uv1_scale = Vector3(50, 50, 50)
+
+[sub_resource type="QuadMesh" id="QuadMesh_v2mw4"]
+material = SubResource("StandardMaterial3D_d12l5")
+size = Vector2(100, 100)
+subdivide_width = 2
+subdivide_depth = 2
+orientation = 1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_swoep"]
+size = Vector3(100, 0.2, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3q0in"]
+albedo_color = Color(1, 0.513726, 0.521569, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_k1y84"]
+material = SubResource("StandardMaterial3D_3q0in")
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l3cy5"]
+transparency = 1
+albedo_texture = ExtResource("6_jqt17")
+
+[sub_resource type="QuadMesh" id="QuadMesh_krod1"]
+material = SubResource("StandardMaterial3D_l3cy5")
+orientation = 1
+
+[node name="root" type="Node3D"]
+script = ExtResource("1_qykxt")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_e0dry")
+
+[node name="ground" type="StaticBody3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0, 0)
+
+[node name="ground_mesh" type="MeshInstance3D" parent="ground"]
+mesh = SubResource("QuadMesh_v2mw4")
+skeleton = NodePath("../..")
+
+[node name="ground_collision_shape" type="CollisionShape3D" parent="ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+shape = SubResource("BoxShape3D_swoep")
+
+[node name="camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 7.46075, 7.04461)
+fov = 40.0
+size = 15.286
+
+[node name="sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.162851, 0.725854, -0.668293, -0.374183, 0.672172, 0.638884, 0.912944, 0.146021, 0.381066, -4.14751, 5.19288, 0)
+light_energy = 2.0
+shadow_enabled = true
+sky_mode = 1
+
+[node name="player_mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 1.5, 0)
+mesh = SubResource("CapsuleMesh_k1y84")
+
+[node name="arrows" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.12132, 0, 2.12132, 0, 3, 0, -2.12132, 0, 2.12132, 0, 1.01, 0)
+mesh = SubResource("QuadMesh_krod1")
+
+[node name="cube" parent="." instance=ExtResource("3_o4eij")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, -1, 0)
